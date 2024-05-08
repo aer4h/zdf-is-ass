@@ -33,7 +33,7 @@ local function CZNUMJ_fake_script()
 	local script = Instance.new('LocalScript', Frame)
 
 	script.Parent.Visible = false
-	wait (30)
+	wait (17)
 	script.Parent.Visible = true
 	wait (3)
 	script.Parent.Visible = false
