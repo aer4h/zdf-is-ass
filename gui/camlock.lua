@@ -4,8 +4,6 @@ CoreGui:SetCore("SendNotification", {
 	Title = "Camlock [V1.0.0]";
 	Text = "Keybind: Z";
 	Duration = 5;
-	--Callback here
-	Button1 = "Yes";
 })
 
 local Players = game:GetService("Players")
