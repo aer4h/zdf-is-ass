@@ -1,56 +1,70 @@
--- Create a function to draw a box around a player's character
-local function drawBox(player)
+-- Function to create a box outline around a player's character
+local function createBoxOutline(player)
     local character = player.Character
     if character then
-        local torso = character:FindFirstChild("HumanoidRootPart")
-        if torso then
-            local box = Instance.new("BoxHandleAdornment")
-            box.Adornee = torso
-            box.Size = torso.Size + Vector3.new(0.2, 0.2, 0.2) -- Add a little extra to make sure the box fully surrounds the character
-            box.Color3 = Color3.fromRGB(255, 0, 0) -- Red color
-            box.Transparency = 0.5 -- Semi-transparent
-            box.AlwaysOnTop = true
-            box.ZIndex = 5
-            box.Parent = torso
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+        local head = character:FindFirstChild("Head")
+        if rootPart and head then
+            local boxOutline = Instance.new("SelectionBox")
+            boxOutline.Color3 = Color3.new(0, 0, 0) -- Black color
+            boxOutline.LineThickness = 0.05 -- Adjust thickness as needed
+            boxOutline.Adornee = character
+            boxOutline.Archivable = false
+            boxOutline.Parent = character
         end
     end
 end
 
--- Function to remove the box around a player's character
-local function removeBox(player)
+-- Function to remove the box outline around a player's character
+local function removeBoxOutline(player)
     local character = player.Character
     if character then
-        local box = character:FindFirstChildOfClass("BoxHandleAdornment")
-        if box then
-            box:Destroy()
-        end
-    end
-end
-
--- Function to update boxes for all players
-local function updateBoxes()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
-            if player.Character then
-                drawBox(player)
+        for _, descendant in ipairs(character:GetDescendants()) do
+            if descendant:IsA("SelectionBox") then
+                descendant:Destroy()
             end
         end
     end
 end
 
--- Connect functions to player events
+-- Function to create box outlines for other players
+local function createBoxOutlinesForOtherPlayers()
+    local localPlayer = game.Players.LocalPlayer
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= localPlayer then
+            createBoxOutline(player)
+        end
+    end
+end
+
+-- Function to remove all existing box outlines and create new ones for other players
+local function updateBoxOutlines()
+    local localPlayer = game.Players.LocalPlayer
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= localPlayer then
+            removeBoxOutline(player)
+            createBoxOutline(player)
+        end
+    end
+end
+
+-- Connect the functions to player events
 game.Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        drawBox(player)
+        wait(1) -- Wait for character to load
+        createBoxOutline(player)
     end)
 end)
 
 game.Players.PlayerRemoving:Connect(function(player)
-    removeBox(player)
+    removeBoxOutline(player)
 end)
 
--- Update boxes periodically
+-- Initial setup
+createBoxOutlinesForOtherPlayers()
+
+-- Continuously update the box outlines for other players
 while true do
-    updateBoxes()
+    updateBoxOutlines()
     wait(1) -- Adjust the interval as needed
 end
