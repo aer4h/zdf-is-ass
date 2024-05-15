@@ -1,3 +1,10 @@
+local CoreGui = game:GetService("StarterGui")
+
+CoreGui:SetCore("SendNotification", {
+	Title = "Box";
+	Duration = 5;
+})
+
 -- Function to create a box outline around a player's character
 local function createBoxOutline(player)
     local character = player.Character
